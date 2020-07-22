@@ -4,7 +4,7 @@ $(document).ready(function() {
     // To set the date in header
     const curDayEl = $('#currentDay');
     const todaysDate = moment();
-    console.log(todaysDate.hours()); //To remove later
+    console.log(moment().day()); //To remove later
     // The container that holds the calendar
     const container = $('div.container');
 
@@ -12,6 +12,7 @@ $(document).ready(function() {
     // To display the date in the header - using moment.js
     curDayEl.text(todaysDate.format('dddd, MMMM DD YYYY'));
 
+    // Iterate through the hours to populate the rows of the calendar
     for (i = 9; i < 18; i++) {
         // container.html($('<div class="row time-block"></div>'));
         const rowEl = $('<div>');
@@ -21,8 +22,16 @@ $(document).ready(function() {
 
         rowEl.addClass('row time-block');
         hourEl.addClass('col-2 col-md-1 hour');
-        //use moment.js for this
-        hourEl.text(i + "AM");
+
+        //To set the hour in first column - use moment.js for this?
+        if ( i < 12) {
+            hourEl.text(i + "AM");
+        } else if (i === 12) {
+            hourEl.text(i + "PM");
+        } else {
+            hourEl.text((i - 12) + "PM");
+        }
+
         calTextArea.addClass('col-8 col-sm-10');
         calTextArea.attr('name', 'hourplan');
         saveBtn.addClass('col-2 col-md-1 saveBtn');
