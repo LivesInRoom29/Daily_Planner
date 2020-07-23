@@ -23,33 +23,22 @@ $(document).ready(function() {
         {time: "17", text: ""},
     ];
     console.log(planner);
+    console.log(planner[0]);
+    console.log(planner[1].text);
     // To display the date in the header - using moment.js
     curDayEl.text(todaysDate.format('dddd, MMMM DD YYYY'));
 
 
-    // function getSavedPlans(start, end) {
-    //     // Sort the array first
-    //     let plannerList = JSON.parse(localStorage.getItem('plannerKEY')).sort(function (a, b) {
-    //         return a.timeblock - b.timeblock;
-    //     });
+    function getSavedPlans(start, end) {
+        const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
-    //     console.log(plannerList[0]);
-    //     console.log(plannerList[1].timeblock);
-    //     console.log(plannerList[2].text);
-
-    //     const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
-
-    //     //Loop through the array to add text to the planner where it exists
-    //     range.forEach(function(element) {
-    //         const textblock = $('#'+element);
-    //         const index = element - 9;
-    //         if (plannerList[index].text) {
-    //             textblock.append(plannerList[index].text);
-    //         }
-    //     });
-    // };
-
-    // getSavedPlans(9,18);
+        //Loop through the array to add text to the planner where it exists
+        range.forEach(function(element) {
+            const textblock = $('#'+element);
+            const index = element - 9;
+            textblock.append(planner[index].text);
+        });
+    };
 
     function saveText(timeblock) {
         const thisTextArea = $('#'+timeblock);
@@ -60,6 +49,9 @@ $(document).ready(function() {
         // Save to memory
         localStorage.setItem('plannerKEY', JSON.stringify(planner));
     };
+
+    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (18:00)
+    getSavedPlans(9,18);
 
     // Add event listener for save button - listen for all .saveBtn
     $("button.saveBtn").on("click", function(event) {
