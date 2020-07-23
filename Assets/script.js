@@ -24,13 +24,7 @@ $(document).ready(function() {
         hourEl.addClass('col-2 col-md-1 hour');
 
         //To set the hour in first column - use moment.js for this?
-        if ( i < 12) {
-            hourEl.text(i + "AM");
-        } else if (i === 12) {
-            hourEl.text(i + "PM");
-        } else {
-            hourEl.text((i - 12) + "PM");
-        }
+        hourEl.text(setHour(i));
 
         calTextArea.addClass('col-8 col-sm-10');
         calTextArea.attr('name', 'hourplan');
@@ -42,6 +36,19 @@ $(document).ready(function() {
         rowEl.append(hourEl, calTextArea, saveBtn);
     }
 
+    // Takes an hour from 24 hour time to make it AM or PM
+    function setHour(hr) {
+        let time = 0;
 
+        if (hr < 12) {
+            time = hr + "AM";
+        } else if (hr === 12) {
+            time = hr + "PM";
+        } else {
+            time = (hr - 12) + "PM";
+        }
+
+        return time;
+    }
 
 });
