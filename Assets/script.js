@@ -7,7 +7,7 @@ $(document).ready(function() {
     // The container that holds the calendar
     const container = $('div.container');
 
-&    let planner = JSON.parse(localStorage.getItem('plannerKEY')) || [
+    let planner = JSON.parse(localStorage.getItem('plannerKEY')) || [
         {time: "9", text: ""},
         {time: "10", text: ""},
         {time: "11", text: ""},
@@ -87,32 +87,26 @@ $(document).ready(function() {
     };
 
     function saveText(timeblock) {
+        // use the time to select for the correct textarea
         const thisTextArea = $(`.text${timeblock}`);
+        // Get the text typed into the textarea
         const text = thisTextArea.val();
+        // time is from 9-17, so need to change to index 0-8
         const index = timeblock - 9
-        // Find correct time, edit the text in the object
+        // Find correct time in the planner array, edit the text in the correct object
         planner[index].text = text;
         // Save to memory
         localStorage.setItem('plannerKEY', JSON.stringify(planner));
     };
 
-    // Add event listener for save button - listen for all .saveBtn
+    // Add event listener for save button - listen for all buttons in the container
     container.on("click", "button", function(event) {
        // event.preventDefault(); DO I NEED THIS?
         const thisBtn = $(this);
-        const classes = thisBtn.attr('class').split(' ');
-        const lastClass = classes[classes.length - 1];
+        // get the data-time value
+        const timeValue = thisBtn.attr('data-time')
 
-        const textArea = $(`.text${lastClass}`);
-        const textValue = textArea.val();
-        console.log(textValue);
-
-        console.log(event);
-        console.log(thisBtn);
-        console.log(thisBtn.attr('class'));
-        console.log($(this).parent());
-        saveText(lastClass);
+        saveText(timeValue);
     });
-
 
 });
