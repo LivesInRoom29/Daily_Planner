@@ -1,12 +1,15 @@
 $(document).ready(function() {
-
     //Variables:
     // To set the date in header
     const curDayEl = $('#currentDay');
     const todaysDate = moment();
+    // An array that contains all of the <textarea> elements
+    const rows = $('textarea');
+
     // The container that holds the calendar
     const container = $('div.container');
 
+    // Array for the saved planner items; either get it from local storage if it exists, otherwise initialize to array of objects with no text:
     let planner = JSON.parse(localStorage.getItem('plannerKEY')) || [
         {time: "9", text: ""},
         {time: "10", text: ""},
@@ -22,68 +25,33 @@ $(document).ready(function() {
     // To display the date in the header - using moment.js
     curDayEl.text(todaysDate.format('dddd, MMMM DD YYYY'));
 
-    // To populate the rows of the calendar
-    createRows(9, 18);
-
-    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (18:00)
-    getSavedPlans(9,18);
-
-    // Should these functions go at the top?
-    // Takes an hour from 24 hour time to make it AM or PM
-    function setHour(hr) {
-        let time = 0;
-
-        if (hr < 12) {
-            time = hr + "AM";
-        } else if (hr === 12) {
-            time = hr + "PM";
-        } else {
-            time = (hr - 12) + "PM";
-        }
-
-        return time;
+    function colorCodeRows(currentHour) {
+        // For each element in the rows array,
+        rows.each(function(element) {
+            // Makes the element a jQuery object
+            row = $(this);
+            // Add a class based on if the id of the row is before, after, or the same as the current hour
+            if (row.attr('id') < currentHour) {
+                row.addClass('past');
+            } else if (row.attr('id') > currentHour) {
+                row.addClass('future');
+            } else {
+                row.addClass('present');
+            }
+        })
     };
+
+    // Need to add functionality to reload the page when the hour changes to reset the color-coding
+    // Set the hour, check every minute to see if it changed, when it changes, reload page and reset the hour to the new one
 
     function getSavedPlans(start, end) {
         const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
-
         //Loop through the array to add text to the planner where it exists
         range.forEach(function(element) {
-            const textblock = $(`.text${element}`);
+            const textblock = $('#'+element);
             const index = element - 9;
             textblock.append(planner[index].text);
         });
-    };
-
-    function createRows(start, end) {
-        // Iterate through the hours (from start to end - end non-inclusive) to populate the rows of the calendar
-        for (i = start; i < end; i++) {
-            const rowEl = $('<div>');
-            const hourEl = $('<div>');
-            const calTextArea = $('<textarea>');
-            const saveBtn = $('<button>');
-
-            rowEl.addClass('row time-block');
-            hourEl.addClass('col-2 col-md-1 hour');
-
-            //To set the hour in first column - use moment.js for this?
-            hourEl.text(setHour(i));
-
-            calTextArea.addClass(`col-8 col-sm-10 text${i}`);
-            calTextArea.attr({
-                name: 'hourplan',
-                'data-time': i
-            });
-            saveBtn.addClass('col-2 col-md-1 saveBtn ' + i);
-            saveBtn.attr({
-                type: 'button',
-                'data-time': i
-            });
-            saveBtn.html('<i class="far fa-save"></i>');
-
-            container.append(rowEl);
-            rowEl.append(hourEl, calTextArea, saveBtn);
-        }
     };
 
     function saveText(timeblock) {
@@ -99,14 +67,16 @@ $(document).ready(function() {
         localStorage.setItem('plannerKEY', JSON.stringify(planner));
     };
 
-    // Add event listener for save button - listen for all buttons in the container
-    container.on("click", "button", function(event) {
-       // event.preventDefault(); DO I NEED THIS?
+    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (18:00)
+    getSavedPlans(9,18);
+    // Use moment.js to get the current Hour and pass it in to the function to color-code the rows
+    colorCodeRows(moment().hour());
+
+    // Add event listener for save button - listen for all .saveBtn
+    $("button.saveBtn").on("click", function(event) {
+        // event.preventDefault(); DO I NEED THIS?
         const thisBtn = $(this);
-        // get the data-time value
-        const timeValue = thisBtn.attr('data-time')
-
-        saveText(timeValue);
-    });
-
+        console.log(thisBtn);
+        saveText(thisBtn.attr('data-time'));
+     });
 });
