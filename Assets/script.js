@@ -42,7 +42,8 @@ $(document).ready(function() {
     };
 
     // Need to add functionality to reload the page when the hour changes to reset the color-coding
-
+    // Set the hour, check every minute to see if it changed, when it changes, reload page and reset the hour to the new one
+    
     function getSavedPlans(start, end) {
         const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
         //Loop through the array to add text to the planner where it exists
