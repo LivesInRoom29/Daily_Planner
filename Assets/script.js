@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    //Variables:
     // To set the date in header
     const curDayEl = $('#currentDay');
     const todaysDate = moment();
@@ -7,7 +6,6 @@ $(document).ready(function() {
     const rows = $('textarea');
     // Array for the saved planner items.
     let planner = [];
-
 
     // To display the date in the header - using moment.js
     curDayEl.text(todaysDate.format('dddd, MMMM DD YYYY'));
@@ -32,6 +30,7 @@ $(document).ready(function() {
         rows.each(function(element) {
             // Makes the element a jQuery object
             row = $(this);
+            // Set the class to not include past, present, or future
             row.attr('class', 'col-8 col-sm-10');
             // Add a class based on if the id of the row is before, after, or the same as the current hour
             if (row.attr('id') < currentHour) {
@@ -43,9 +42,6 @@ $(document).ready(function() {
             }
         })
     };
-
-    // Need to add functionality to reload the page when the hour changes to reset the color-coding
-    // Set the hour, check every minute to see if it changed, when it changes, reload page and reset the hour to the new one
 
     function getSavedPlans(start, end) {
         const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
@@ -83,7 +79,7 @@ $(document).ready(function() {
     // Fill the planner with saved plans, from 9pm (9:00) - 5pm (17:00)
     getSavedPlans(9,18);
     // Use moment.js to get the current Hour and pass it in to the function to color-code the rows
-    colorCodeRows(moment().add(11, 'h').hour()); //**Make  sure to take this out
+    colorCodeRows(moment().hour());
 
     // Every minute, check the current time to see if it's a new hour (minutes == 00); if so, run the function to color-code the rows
     setInterval(function() {
@@ -92,18 +88,18 @@ $(document).ready(function() {
         }
     }, 60000);
 
-    // Add event listener for save button - listen for all .saveBtn
+    // Event listener for save button - listen for all .saveBtn
     $("button.saveBtn").on("click", function(event) {
         // event.preventDefault(); DO I NEED THIS?
         const thisBtn = $(this);
         saveText(thisBtn.attr('data-time'));
-     });
+    });
 
-     // Event listener for the Clear Calendar btn; user must confirm that they are OK with losing the data.
-     $("button.clear").on("click", function() {
+    // Event listener for the Clear Calendar btn; user must confirm that they are OK with losing the data.
+    $("button.clear").on("click", function() {
         const clear = confirm("Are you sure you want to clear the calendar? You will lose all information that is currently stored in memory.")
         if(clear) {
             clearCalendar();
         };
-     });
+    });
 });
