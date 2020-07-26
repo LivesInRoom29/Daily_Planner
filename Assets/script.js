@@ -5,25 +5,27 @@ $(document).ready(function() {
     const todaysDate = moment();
     // An array that contains all of the <textarea> elements
     const rows = $('textarea');
+    // Array for the saved planner items.
+    let planner = [];
 
-    // The container that holds the calendar
-    const container = $('div.container');
-
-    // Array for the saved planner items; either get it from local storage if it exists, otherwise initialize to array of objects with no text:
-    let planner = JSON.parse(localStorage.getItem('plannerKEY')) || [
-        {time: "9", text: ""},
-        {time: "10", text: ""},
-        {time: "11", text: ""},
-        {time: "12", text: ""},
-        {time: "13", text: ""},
-        {time: "14", text: ""},
-        {time: "15", text: ""},
-        {time: "16", text: ""},
-        {time: "17", text: ""},
-    ];
 
     // To display the date in the header - using moment.js
     curDayEl.text(todaysDate.format('dddd, MMMM DD YYYY'));
+
+    function setPlanner() {
+        // Either get saved planner items from local storage if it exists, otherwise initialize to array of objects with no text:
+        planner = JSON.parse(localStorage.getItem('plannerKEY')) || [
+            {time: "9", text: ""},
+            {time: "10", text: ""},
+            {time: "11", text: ""},
+            {time: "12", text: ""},
+            {time: "13", text: ""},
+            {time: "14", text: ""},
+            {time: "15", text: ""},
+            {time: "16", text: ""},
+            {time: "17", text: ""},
+        ];
+    };
 
     function colorCodeRows(currentHour) {
         // For each element in the rows array,
@@ -51,7 +53,7 @@ $(document).ready(function() {
         range.forEach(function(element) {
             const textblock = $(`#${element}`);
             const index = element - 9;
-            textblock.append(planner[index].text);
+            textblock.html(planner[index].text);
         });
     };
 
@@ -68,16 +70,40 @@ $(document).ready(function() {
         localStorage.setItem('plannerKEY', JSON.stringify(planner));
     };
 
-    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (17:00)
+    // Clears local storage, resets the planner array and clears the calendar of plans
+    function clearCalendar() {
+        localStorage.clear();
+        setPlanner();
+        getSavedPlans(9,18);
+    };
+
+    // Upon page load:
+    // Set the planner array using local storage if it exists.
+    setPlanner();
+    // Fill the planner with saved plans, from 9pm (9:00) - 5pm (17:00)
     getSavedPlans(9,18);
     // Use moment.js to get the current Hour and pass it in to the function to color-code the rows
-    colorCodeRows(moment().add(13, 'h').hour()); //**Make  sure to take this out
+    colorCodeRows(moment().add(11, 'h').hour()); //**Make  sure to take this out
 
+    // Every minute, check the current time to see if it's a new hour (minutes == 00); if so, run the function to color-code the rows
+    setInterval(function() {
+        if (moment().minute() === 0) {
+            colorCodeRows(moment().hour());
+        }
+    }, 60000);
 
     // Add event listener for save button - listen for all .saveBtn
     $("button.saveBtn").on("click", function(event) {
         // event.preventDefault(); DO I NEED THIS?
         const thisBtn = $(this);
         saveText(thisBtn.attr('data-time'));
+     });
+
+     // Event listener for the Clear Calendar btn; user must confirm that they are OK with losing the data.
+     $("button.clear").on("click", function() {
+        const clear = confirm("Are you sure you want to clear the calendar? You will lose all information that is currently stored in memory.")
+        if(clear) {
+            clearCalendar();
+        };
      });
 });
