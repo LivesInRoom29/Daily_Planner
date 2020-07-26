@@ -30,6 +30,7 @@ $(document).ready(function() {
         rows.each(function(element) {
             // Makes the element a jQuery object
             row = $(this);
+            row.attr('class', 'col-8 col-sm-10');
             // Add a class based on if the id of the row is before, after, or the same as the current hour
             if (row.attr('id') < currentHour) {
                 row.addClass('past');
@@ -48,7 +49,7 @@ $(document).ready(function() {
         const range = [9, 10, 11, 12, 13, 14, 15, 16, 17];
         //Loop through the array to add text to the planner where it exists
         range.forEach(function(element) {
-            const textblock = $('#'+element);
+            const textblock = $(`#${element}`);
             const index = element - 9;
             textblock.append(planner[index].text);
         });
@@ -56,7 +57,7 @@ $(document).ready(function() {
 
     function saveText(timeblock) {
         // use the time to select for the correct textarea
-        const thisTextArea = $(`.text${timeblock}`);
+        const thisTextArea = $(`#${timeblock}`);
         // Get the text typed into the textarea
         const text = thisTextArea.val();
         // time is from 9-17, so need to change to index 0-8
@@ -67,16 +68,16 @@ $(document).ready(function() {
         localStorage.setItem('plannerKEY', JSON.stringify(planner));
     };
 
-    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (18:00)
+    // Upon page load, this function will fill the planner with saved plans, from 9pm (9:00) - 5pm (17:00)
     getSavedPlans(9,18);
     // Use moment.js to get the current Hour and pass it in to the function to color-code the rows
-    colorCodeRows(moment().hour());
+    colorCodeRows(moment().add(13, 'h').hour()); //**Make  sure to take this out
+
 
     // Add event listener for save button - listen for all .saveBtn
     $("button.saveBtn").on("click", function(event) {
         // event.preventDefault(); DO I NEED THIS?
         const thisBtn = $(this);
-        console.log(thisBtn);
         saveText(thisBtn.attr('data-time'));
      });
 });
