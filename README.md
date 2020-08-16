@@ -1,4 +1,7 @@
 # Daily_Planner
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+
+
 HW5 for UNH Coding Bootcamp: This is a calendar application created using jQuery.
 
 ## Description
@@ -29,3 +32,7 @@ If the user clicks on the "Clear Calendar" button, a pop-up appears to confirm t
 * Starter HTML and CSS provided by Trilogy Education Services.
 
 * Thanks to the UNH Bootcamp instructor, TAs, tutors for providing the class with lots of practice using JavaScript and jQuery and for answering all of our questions and helping to walk us through issues as needed.
+
+## License
+
+Unlicense
